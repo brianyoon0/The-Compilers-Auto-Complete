@@ -25,6 +25,6 @@ private:
 
     TSTNode* insertRec(TSTNode *node, const string &word, int index);
     const TSTNode* searchPrefix(const TSTNode *node, const string &prefix, int index) const;
-    void collect(cosnt TSTNode *node, string &path, vecotr<string> &out, int limit) const;
+    void collect(const TSTNode *node, string &path, vector<string> &out, int limit) const;
     void freeAll(TSTNode *node);
 };
