@@ -1,8 +1,30 @@
-//
-// Created by brian on 11/3/2025.
-//
+#pragma once
+#include <string>
+#include <vector>
+using namespace std;
 
-#ifndef THE_COMPILERS_AUTO_COMPLETE_TST_H
-#define THE_COMPILERS_AUTO_COMPLETE_TST_H
+//each node in the ternary search tree
+struct TSTNode {
+    char ch;
+    bool isEnd;
+    TSTNode *left, *equal, *right;
 
-#endif //THE_COMPILERS_AUTO_COMPLETE_TST_H
+    TSTNode(char c) : ch(c), isEnd(false), left(nullptr), equal(nullptr), right(nullptr) {}
+};
+
+class TST {
+public:
+    TST();
+    ~TST();
+
+    void insert(const string &word);
+    vector<string> findCompletions(const string &prefix) const;
+
+private:
+    TSTNode *root;
+
+    TSTNode* insertRec(TSTNode *node, const string &word, int index);
+    const TSTNode* searchPrefix(const TSTNode *node, const string &prefix, int index) const;
+    void collect(cosnt TSTNode *node, string &path, vecotr<string> &out, int limit) const;
+    void freeAll(TSTNode *node);
+};
