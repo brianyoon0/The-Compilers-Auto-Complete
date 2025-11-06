@@ -26,6 +26,7 @@ void TST::insert(const string &word) {
 TSTNode* TST::insertRec(TSTNode* node, const string &word, int index) {
     char c = word[index];
     if (!node) node = new TSTNode(c);
+    ++nodeCount;
 
     if (c < node->ch)
         node->left = insertRec(node->left, word, index);

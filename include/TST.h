@@ -19,9 +19,12 @@ public:
 
     void insert(const string &word);
     vector<string> findCompletions(const string &prefix) const;
+    size_t getNodeCount() const{return nodeCount;}
+
 
 private:
     TSTNode *root;
+    size_t nodeCount = 0;
 
     TSTNode* insertRec(TSTNode *node, const string &word, int index);
     const TSTNode* searchPrefix(const TSTNode *node, const string &prefix, int index) const;
