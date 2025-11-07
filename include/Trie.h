@@ -1,8 +1,29 @@
-//
-// Created by brian on 11/3/2025.
-//
+#pragma once
 
-#ifndef THE_COMPILERS_AUTO_COMPLETE_TRIE_H
-#define THE_COMPILERS_AUTO_COMPLETE_TRIE_H
+#include <string>
+#include <vector>
+#include <unordered_map>
+#include <memory>
 
-#endif //THE_COMPILERS_AUTO_COMPLETE_TRIE_H
+struct TrieNode {
+    std::unordered_map<char, std::unique_ptr<TrieNode>> children;
+    bool isEndOfWord;
+
+    TrieNode() : isEndOfWord(false) {}
+};
+
+class Trie {
+public:
+    Trie();
+    ~Trie();
+
+    void insert(const std::string& word);
+    bool search(const std::string& word) const;
+    std::vector<std::string> getSuggestions(const std::string& prefix) const;
+
+private:
+    std::unique_ptr<TrieNode> root;
+
+    TrieNode* findPrefixNode(const std::string& prefix) const;
+    void findWordsFromNode(TrieNode* node, std::string currentPrefix, std::vector<std::string>& results) const;
+};
