@@ -13,6 +13,20 @@ static string lower(string s) {
     return s;
 }
 
+
+static double avg_query_us(TST& tst, const string& prefix, int iters = 200) {
+    volatile size_t sink = 0;
+    auto t0 = chrono::steady_clock::now();
+    for (int i = 0; i < iters; ++i) {
+        auto results = tst.findCompletions(prefix);
+        sink += results.size();
+    }
+    auto t1 = chrono::steady_clock::now();
+    auto ns = chrono::duration_cast<chrono::nanoseconds>(t1 - t0).count();
+    return (ns / 1000.0) / iters;
+
+}
+
 int main() {
     TST tst;
 
@@ -56,17 +70,42 @@ int main() {
         if (prefix == "exit")break;
         prefix = lower(prefix);
 
+        int runs = 500;
+        volatile size_t sink = 0;
         auto qstart = chrono::high_resolution_clock::now();
-        auto results = tst.findCompletions(prefix);
+        for (int i = 0; i < runs; ++i) {
+            auto res = tst.findCompletions(prefix);
+            sink += res.size();
+        }
         auto qend = chrono::high_resolution_clock::now();
-        auto query_time = chrono::duration_cast<chrono::milliseconds>(qend - qstart).count();
+        auto total_us = chrono::duration_cast<chrono::microseconds>(qend - qstart).count();
+        double avg_us = total_us / static_cast<double>(runs);
 
-        cout << "Query time: " << query_time << "µs\n";
-        if (results.empty()){
-            cout << "(no matches)\n";
-            } else {
-                for (auto &r : results) cout << " - " << r << "\n";
+        auto results = tst.findCompletions(prefix);
+
+        cout << "\nTST Prefix: " << prefix << " | Average Query Time: " << avg_us << "us" << " | Results: " << results.size() << "\n";
+
+        if (results.empty()) {
+            cout << "No Results\n";
+        } else {
+            for (auto &r : results) cout << " - " << r << '\n';
         }
     }
     return 0;
 }
+//
+
+//         auto qstart = chrono::high_resolution_clock::now();
+//         auto results = tst.findCompletions(prefix);
+//         auto qend = chrono::high_resolution_clock::now();
+//         auto query_time = chrono::duration_cast<chrono::milliseconds>(qend - qstart).count();
+//
+//         cout << "Query time: " << query_time << "us\n";
+//         if (results.empty()){
+//             cout << "(no matches)\n";
+//             } else {
+//                 for (auto &r : results) cout << " - " << r << "\n";
+//         }
+//     }
+//     return 0;
+// }
