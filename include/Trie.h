@@ -5,8 +5,10 @@
 #include <unordered_map>
 #include <memory>
 
+using namespace std;
+
 struct TrieNode {
-    std::unordered_map<char, std::unique_ptr<TrieNode>> children;
+    unordered_map<char, unique_ptr<TrieNode>> children;
     bool isEndOfWord;
 
     TrieNode() : isEndOfWord(false) {}
@@ -17,13 +19,17 @@ public:
     Trie();
     ~Trie();
 
-    void insert(const std::string& word);
-    bool search(const std::string& word) const;
-    std::vector<std::string> getSuggestions(const std::string& prefix) const;
+    void insert(const string& word);
+    bool search(const string& word) const;
+    vector<string> getSuggestions(const string& prefix) const;
+
+    //Gets the total number of nodes in the trie
+    size_t getNodeCount() const { return nodeCount; }
 
 private:
-    std::unique_ptr<TrieNode> root;
+    unique_ptr<TrieNode> root;
+    size_t nodeCount; //useful to track memory usage
 
-    TrieNode* findPrefixNode(const std::string& prefix) const;
-    void findWordsFromNode(TrieNode* node, std::string currentPrefix, std::vector<std::string>& results) const;
+    TrieNode* findPrefixNode(const string& prefix) const;
+    void findWordsFromNode(TrieNode* node, string currentPrefix, vector<string>& results) const;
 };
