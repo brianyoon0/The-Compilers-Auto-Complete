@@ -8,20 +8,20 @@
 #include <iomanip> // For formatting output
 
 // Include your headers (assuming they are in the 'include' path)
-#include "Trie.H" 
+#include "Trie.h"
 #include "TST.h"  
 
 using namespace std;
 using namespace std::chrono;
 
-// Helper function to lowercase strings
+//Converts to lower char
 static string lower(string s) {
     for (char &c : s)
         c = static_cast<char>(tolower(static_cast<unsigned char>(c)));
     return s;
 }
 
-// Helper to print the top 10 results in the desired format
+// Print the top 10
 void printSuggestions(const vector<string>& results) {
     if (results.empty()) {
         cout << "  (No suggestions found)\n";
@@ -50,14 +50,11 @@ void printSuggestions(const vector<string>& results) {
 
 
 int main() {
-    // --- 1. Load Words from File ---
-    
-    // Use a relative path. Run your executable from the project's root directory.
-    string filepath = "./data/words.txt"; 
+   //Load words from the words.txt
+    string filepath = "./data/words.txt";
     ifstream fin(filepath);
     if (!fin.is_open()) {
         cerr << "Error: could not open file: " << filepath << "\n";
-        cerr << "Please run this executable from the project's root directory.\n";
         return 1;
     }
 
@@ -67,13 +64,26 @@ int main() {
         line = lower(line);
         if (!line.empty()) words.push_back(line);
     }
+
     fin.close();
+    cout << "\n";
+    cout << "    ___         __                                   __     __     \n";
+    cout << "   /   | __  __/ /_____  _________  ____ ___  ____  / /__  / /____ \n";
+    cout << "  / /| |/ / / / __/ __ \\/ ___/ __ \\/ __ `__ \\/ __ \\/ / _ \\/ __/ _ \\\n";
+    cout << " / ___ / /_/ / /_/ /_/ / /__/ /_/ / / / / / / /_/ / /  __/ /_/  __/\n";
+    cout << "/_/  |_\\__,_/\\__/\\____/\\___/\\____/_/ /_/ /_/ .___/_/\\___/\\__/\\___/ \n";
+    cout << "                  / ____/___  ____ _(_)___/_/__                    \n";
+    cout << "                 / __/ / __ \\/ __ `/ / __ \\/ _ \\                   \n";
+    cout << "                / /___/ / / / /_/ / / / / /  __/                   \n";
+    cout << "               /_____/_/ /_/\\__, /_/_/ /_/\\___/                    \n";
+    cout << "                           /____/\n";
+    cout << "\n";
 
-    cout << "Autocomplete Engine: Trie vs Ternary\n";
-    cout << "Building data structures ... ";
-    cout.flush(); // Force print before long build
 
-    // --- 2. Build and Time Trie ---
+    cout << "Building data structures ... \n";
+    cout.flush(); //Make sure its outputs everything above before outputting build time and space
+
+    //---Trie---
     Trie trie;
     auto trie_start = high_resolution_clock::now();
     for (const auto &w : words) {
@@ -81,14 +91,10 @@ int main() {
     }
     auto trie_end = high_resolution_clock::now();
     auto trie_build_time = duration_cast<milliseconds>(trie_end - trie_start).count();
-    
-    // Note: This is a rough approximation. It doesn't account for
-    // the overhead of the unordered_map's internal allocations.
+
     double trie_memory_mb = (trie.getNodeCount() * sizeof(TrieNode)) / 1'048'576.0; // 1024*1024
 
-    
-    // --- 3. Build and Time TST ---
-    // (Assuming TST has getNodeCount() and TSTNode is defined in TST.h)
+    ///---TST---
     TST tst;
     auto tst_start = high_resolution_clock::now();
     for (const auto &w : words) {
@@ -96,18 +102,15 @@ int main() {
     }
     auto tst_end = high_resolution_clock::now();
     auto tst_build_time = duration_cast<milliseconds>(tst_end - tst_start).count();
-    
-    // Note: This is also a rough approximation.
+
     double tst_memory_mb = (tst.getNodeCount() * sizeof(TSTNode)) / 1'048'576.0; // 1024*1024
 
-    
-    // --- 4. Print Build Report ---
-    cout << fixed << setprecision(2); // Set output to 2 decimal places
-    cout << "Trie built in " << trie_build_time << " ms, using " << trie_memory_mb << " MB. ";
+
+    cout << fixed << setprecision(2); // 2 decimal places
+    cout << "Trie built in " << trie_build_time << " ms, using " << trie_memory_mb << " MB. \n";
     cout << "TST built in " << tst_build_time << " ms, using " << tst_memory_mb << " MB.\n";
 
-
-    // --- 5. Main Query Loop ---
+    //---loop---
     string prefix;
     const int BENCHMARK_RUNS = 500;
 
@@ -118,8 +121,11 @@ int main() {
         if (prefix == "exit") break;
         prefix = lower(prefix);
 
-        // --- Benchmark and Query Trie ---
-        volatile size_t trie_sink = 0; // To prevent compiler optimization
+        //REALLY IMPORTANT!!!
+        //Modern compilers tend to optimize and skip entire loops where values are not used
+        //To prevent this, we can use a "sink" to make sure the code doesnt skip the for loop
+
+        volatile size_t trie_sink = 0;
         auto trie_q_start = high_resolution_clock::now();
         for (int i = 0; i < BENCHMARK_RUNS; ++i) {
             auto res = trie.getSuggestions(prefix);
@@ -132,12 +138,10 @@ int main() {
         auto trie_results = trie.getSuggestions(prefix); // Get results once to display
 
         cout << fixed << setprecision(1); // Set output to 1 decimal place for time
-        cout << "\n--- Suggestion from Trie (found in " << trie_avg_us << " us) --\n";
+        cout << "\n--- Suggestion from Trie (found in " << (trie_avg_us) << " us) --\n";
         printSuggestions(trie_results);
 
-
-        // --- Benchmark and Query TST ---
-        // (Assuming TST method is findCompletions)
+        //Same idea as previous
         volatile size_t tst_sink = 0; 
         auto tst_q_start = high_resolution_clock::now();
         for (int i = 0; i < BENCHMARK_RUNS; ++i) {
@@ -150,7 +154,7 @@ int main() {
 
         auto tst_results = tst.findCompletions(prefix); // Get results once to display
 
-        cout << "\n--- Suggestion from TST (found in " << tst_avg_us << " us) --\n";
+        cout << "\n--- Suggestion from TST (found in " << (tst_avg_us/) << " us) --\n";
         printSuggestions(tst_results);
     }
 
