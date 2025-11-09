@@ -65,6 +65,7 @@ int main() {
         if (!line.empty()) words.push_back(line);
     }
 
+    //--- Title ---
     fin.close();
     cout << "\n";
     cout << "    ___         __                                   __     __     \n";
