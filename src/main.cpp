@@ -72,7 +72,7 @@ int main() {
     cout << "  / /| |/ / / / __/ __ \\/ ___/ __ \\/ __ `__ \\/ __ \\/ / _ \\/ __/ _ \\\n";
     cout << " / ___ / /_/ / /_/ /_/ / /__/ /_/ / / / / / / /_/ / /  __/ /_/  __/\n";
     cout << "/_/  |_\\__,_/\\__/\\____/\\___/\\____/_/ /_/ /_/ .___/_/\\___/\\__/\\___/ \n";
-    cout << "                  / ____/___  ____ _(_)___/_/__                    \n";
+    cout << "                  / ____/___   ____  ____ /_/__                    \n";
     cout << "                 / __/ / __ \\/ __ `/ / __ \\/ _ \\                   \n";
     cout << "                / /___/ / / / /_/ / / / / /  __/                   \n";
     cout << "               /_____/_/ /_/\\__, /_/_/ /_/\\___/                    \n";
@@ -154,7 +154,7 @@ int main() {
 
         auto tst_results = tst.findCompletions(prefix); // Get results once to display
 
-        cout << "\n--- Suggestion from TST (found in " << (tst_avg_us/) << " us) --\n";
+        cout << "\n--- Suggestion from TST (found in " << (tst_avg_us) << " us) --\n";
         printSuggestions(tst_results);
     }
 
